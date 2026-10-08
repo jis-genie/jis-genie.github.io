@@ -10,23 +10,26 @@
 <link rel="icon" href="icon-48.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="GENIE">
+<meta name="apple-mobile-web-app-title" content="JIS GENIE">
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: #f5f7fb; overflow: hidden; }
   iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
   #splash { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
             justify-content: center; background: #fff; font: 600 18px system-ui, sans-serif; color: #2f4fa2;
             transition: opacity .4s; z-index: 2; }
-  #splash img { width: 140px; height: 140px; margin-bottom: 12px; }
+  #splash img { width: 200px; height: auto; margin-bottom: 12px; }
   #splash a { margin-top: 28px; font: 400 13px system-ui, sans-serif; color: #888; }
+  #out { position: fixed; top: 6px; right: 6px; z-index: 3; width: 30px; height: 30px; border-radius: 15px;
+         display: flex; align-items: center; justify-content: center; background: rgba(47,79,162,.55);
+         color: #fff; font: 600 16px system-ui, sans-serif; text-decoration: none; }
 </style>
 </head>
 <body>
 <div id="splash">
-  <img src="icon-512.png" alt="">
-  JIS GENIE
+  <img src="logo.png" alt="JIS GENIE">
   <a id="direct" href="#" target="_blank" rel="noopener" style="visibility:hidden">Not loading? Open GENIE directly to sign in</a>
 </div>
+<a id="out" href="#" target="_blank" rel="noopener" title="Open GENIE directly (if this page shows a Google error)">&#8599;</a>
 <iframe id="genie" title="JIS GENIE"
   allow="microphone; camera; clipboard-read; clipboard-write; autoplay; fullscreen"></iframe>
 <script>
@@ -34,7 +37,7 @@
   // so this address alone gives nobody access.
   var GENIE = 'https://script.google.com/macros/s/AKfycbzA5lUhh846LCKXXpWCqCSJeZJ7LJjTAdjQKQmdYvym-FOHP05kGcCXFhB69e0D6Guuyw/exec?job=genie';
   var f = document.getElementById('genie'), s = document.getElementById('splash'), d = document.getElementById('direct');
-  d.href = GENIE;
+  d.href = GENIE; document.getElementById('out').href = GENIE;
   f.addEventListener('load', function () { s.style.opacity = 0; setTimeout(function () { s.style.display = 'none'; }, 400); });
   setTimeout(function () { d.style.visibility = 'visible'; }, 8000); // only shows if GENIE has not loaded by then
   f.src = GENIE;
