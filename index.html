@@ -22,13 +22,13 @@
   #out { position: fixed; top: 6px; right: 6px; z-index: 3; width: 30px; height: 30px; border-radius: 15px;
          display: flex; align-items: center; justify-content: center; background: rgba(47,79,162,.55);
          color: #fff; font: 600 16px system-ui, sans-serif; text-decoration: none; transition: opacity .8s; }
-  #out.dim { opacity: .3; }
+  #out.dim { opacity: .12; }
   #out.gone { opacity: 0; pointer-events: none; }
 </style>
 </head>
 <body>
 <div id="splash">
-  <img src="logo.png" alt="JIS GENIE">
+  <img src="icon-512.png" alt="JIS GENIE">
   <a id="direct" href="#" target="_blank" rel="noopener" style="visibility:hidden">Not loading? Open GENIE directly to sign in</a>
 </div>
 <a id="out" href="#" target="_blank" rel="noopener" title="Open GENIE directly (if this page shows a Google error)">&#8599;</a>
@@ -42,7 +42,7 @@
   d.href = GENIE; document.getElementById('out').href = GENIE;
   var o = document.getElementById('out'), ready = false;
   f.addEventListener('load', function () { s.style.opacity = 0; setTimeout(function () { s.style.display = 'none'; }, 400);
-    setTimeout(function () { if (!ready) o.className = 'dim'; }, 8000); });   // loaded but no word from GENIE - dim, keep it usable
+    setTimeout(function () { if (!ready) o.className = 'dim'; }, 6000); });   // b9: loaded but no "ready" word - almost invisible, still there in case the page is a Google error
   // GENIE (GenieCore b8, 08-Oct-2026) says "ready" once its page is up - the fallback button is then not needed
   window.addEventListener('message', function (e) { if (e && e.data && e.data.jisGenie === 'ready') { ready = true; o.className = 'gone'; } });
   setTimeout(function () { d.style.visibility = 'visible'; }, 8000); // only shows if GENIE has not loaded by then
