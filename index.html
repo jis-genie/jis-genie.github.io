@@ -24,6 +24,10 @@
          color: #fff; font: 600 16px system-ui, sans-serif; text-decoration: none; transition: opacity .8s; }
   #out.dim { opacity: .12; }
   #out.gone { opacity: 0; pointer-events: none; }
+  #again { position: fixed; left: 16px; right: 16px; bottom: 28px; z-index: 4; display: none; padding: 16px; border-radius: 14px;
+           background: #2f4fa2; color: #fff; text-align: center; font: 600 17px system-ui, sans-serif; text-decoration: none;
+           box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+  #again small { display: block; margin-top: 6px; font: 400 13px system-ui, sans-serif; opacity: .85; }
 </style>
 </head>
 <body>
@@ -32,6 +36,7 @@
   <a id="direct" href="#" target="_blank" rel="noopener" style="visibility:hidden">Not loading? Open GENIE directly to sign in</a>
 </div>
 <a id="out" href="#" target="_blank" rel="noopener" title="Open GENIE directly (if this page shows a Google error)">&#8599;</a>
+<a id="again" href="#" target="_blank" rel="noopener">Sign in again<small>Google asked for a fresh sign-in. Tap, then come back here - GENIE reloads by itself.</small></a>
 <iframe id="genie" title="JIS GENIE"
   allow="microphone; camera; clipboard-read; clipboard-write; autoplay; fullscreen"></iframe>
 <script>
@@ -41,12 +46,20 @@
   var f = document.getElementById('genie'), s = document.getElementById('splash'), d = document.getElementById('direct');
   d.href = GENIE; document.getElementById('out').href = GENIE;
   var o = document.getElementById('out'), ready = false;
+  var a = document.getElementById('again'), tries = 0, chk = null; a.href = GENIE;
+  /* 19-Oct-26: when Google's sign-in inside this frame has expired, the frame shows "401. That's an error".
+     GENIE never says "ready" then. So: one quiet retry; if it still is not ready, a big "Sign in again" button
+     (opens GENIE on its own page, which renews the sign-in); coming back to the app reloads GENIE by itself. */
+  function load() { ready = false; f.src = GENIE + (tries ? '&r=' + Date.now() : ''); tries++; clearTimeout(chk);
+    chk = setTimeout(function () { if (ready) return; if (tries < 2) { load(); return; } a.style.display = 'block'; o.className = ''; }, 9000); }
   f.addEventListener('load', function () { s.style.opacity = 0; setTimeout(function () { s.style.display = 'none'; }, 400);
-    setTimeout(function () { if (!ready) o.className = 'dim'; }, 6000); });   // b9: loaded but no "ready" word - almost invisible, still there in case the page is a Google error
-  // GENIE (GenieCore b8, 08-Oct-2026) says "ready" once its page is up - the fallback button is then not needed
-  window.addEventListener('message', function (e) { if (e && e.data && e.data.jisGenie === 'ready') { ready = true; o.className = 'gone'; } });
+    setTimeout(function () { if (!ready) o.className = 'dim'; }, 6000); });
+  // GENIE (GenieCore b8, 08-Oct-2026) says "ready" once its page is up - the fallback buttons are then not needed
+  window.addEventListener('message', function (e) { if (e && e.data && e.data.jisGenie === 'ready') { ready = true; clearTimeout(chk); o.className = 'gone'; a.style.display = 'none'; } });
+  function back() { if (document.visibilityState === 'visible' && !ready && a.style.display === 'block') { a.style.display = 'none'; tries = 1; load(); } }
+  document.addEventListener('visibilitychange', back); window.addEventListener('focus', back);
   setTimeout(function () { d.style.visibility = 'visible'; }, 8000); // only shows if GENIE has not loaded by then
-  f.src = GENIE;
+  load();
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () {}); }
 </script>
 </body>
